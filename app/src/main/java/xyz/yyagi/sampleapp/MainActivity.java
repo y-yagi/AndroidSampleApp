@@ -1,15 +1,15 @@
 package xyz.yyagi.sampleapp;
 
+import android.app.ActionBar;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import it.neokree.materialnavigationdrawer.MaterialNavigationDrawer;
-import it.neokree.materialnavigationdrawer.elements.MaterialSection;
 
 
 public class MainActivity extends MaterialNavigationDrawer {
@@ -20,12 +20,14 @@ public class MainActivity extends MaterialNavigationDrawer {
         this.addSection(newSection("Section 1", new FragmentIndex()));
         Uri uri = Uri.parse("https://github.com/y-yagi/travel_base");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+
         this.addSubheader("Subheader title");
         this.addSection(newSection("OpenURL", intent));
         this.addSection(newSection("Section 2", new FragmentIndex()));
         this.addSection(newSection("Section 3", R.drawable.ic_arrow_drop_down_white_24dp, new FragmentButton()).setSectionColor(Color.parseColor("#9c27b0")));
-        this.addBottomSection(newSection("Bottom Section",R.drawable.ic_arrow_drop_up_white_24dp,new Intent(this,Settings.class)));
+        this.addBottomSection(newSection("Bottom Section", R.drawable.ic_arrow_drop_up_white_24dp, new Intent(this, Settings.class)));
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
