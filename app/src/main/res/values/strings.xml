@@ -11,4 +11,6 @@
     <string name="title_activity_settings">Settings</string>
     <string name="tab1">tab1</string>
     <string name="tab2">tab2</string>
+    <string name="title_activity_schedule">ScheduleActivity</string>
+    <string name="title_activity_base">BaseActivity</string>
 </resources>
