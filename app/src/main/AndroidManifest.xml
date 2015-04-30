@@ -32,6 +32,7 @@
             android:name=".SignInActivity"
             android:label="@string/title_activity_sign_in" >
         </activity>
-    </application>
 
+    </application>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 </manifest>

@@ -20,13 +20,17 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.plus.People;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.google.android.gms.plus.model.people.PersonBuffer;
 
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -39,10 +43,14 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,7 +59,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SignInActivity extends Activity implements OnClickListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        GoogleApiClient.ServerAuthCodeCallbacks
+        GoogleApiClient.ServerAuthCodeCallbacks,
+        ResultCallback<People.LoadPeopleResult>
 {
 
     private static final String TAG  = "SignInActivity";
@@ -71,6 +80,9 @@ public class SignInActivity extends Activity implements OnClickListener,
     private TextView mServerAuthCodeDisabledLabel;
     private View mRevokeAccessButton;
     private ToggleButton mScopeSelector;
+    private ListView mCirclesListView;
+    private ArrayAdapter<String> mCirclesAdapter;
+    private ArrayList<String> mCirclesList;
 
     /*
      * Stores the connection result from onConnectionFailed callbacks so that we can resolve them
@@ -146,7 +158,6 @@ public class SignInActivity extends Activity implements OnClickListener,
                 mGoogleApiClient.connect();
             }
         });
-
     }
 
     private void restoreState(Bundle savedInstanceState) {
@@ -211,6 +222,7 @@ public class SignInActivity extends Activity implements OnClickListener,
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.sign_in_button:
+                /*
                 if (!mGoogleApiClient.isConnecting()) {
                     int available = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
                     if (available != ConnectionResult.SUCCESS) {
@@ -222,6 +234,13 @@ public class SignInActivity extends Activity implements OnClickListener,
                     mSignInStatus.setText(getString(R.string.signing_in_status));
                     resolveSignInError();
                 }
+
+                */
+                Intent intent = AccountManager.get(this).newChooseAccountIntent(null, null, new String[] {
+                                "com.google"
+                        }, false, null,
+                        null, null, null);
+                startActivityForResult(intent, REQUEST_CODE_SIGN_IN);
                 break;
             case R.id.server_auth_code_reset_button:
                 mServerAuthCodeRequired.set(true);
@@ -281,8 +300,9 @@ public class SignInActivity extends Activity implements OnClickListener,
         if (requestCode == REQUEST_CODE_SIGN_IN
                 || requestCode == REQUEST_CODE_GET_GOOGLE_PLAY_SERVICES) {
             mIntentInProgress = false; //Previous resolution intent no longer in progress.
-
             if (resultCode == RESULT_OK) {
+               Toast.makeText(this, data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME), Toast.LENGTH_SHORT).show();
+
                 // After resolving a recoverable error, now retry connect(). Note that it's possible
                 // mGoogleApiClient is already connected or connecting due to rotation / Activity
                 // restart while user is walking through the (possibly full screen) resolution
@@ -335,6 +355,8 @@ public class SignInActivity extends Activity implements OnClickListener,
     @Override
     public void onConnected(Bundle connectionHint) {
         logVerbose("GoogleApiClient onConnected");
+        Plus.PeopleApi.loadVisible(mGoogleApiClient, null).setResultCallback(this);
+
         Person person = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
         String currentPersonName = person != null
                 ? person.getDisplayName()
@@ -424,6 +446,25 @@ public class SignInActivity extends Activity implements OnClickListener,
         return true;
     }
 
+    @Override
+    public void onResult(People.LoadPeopleResult peopleData) {
+        if (peopleData.getStatus().getStatusCode() == CommonStatusCodes.SUCCESS) {
+            mCirclesList.clear();
+            PersonBuffer personBuffer = peopleData.getPersonBuffer();
+            try {
+                int count = personBuffer.getCount();
+                for (int i = 0; i < count; i++) {
+                    mCirclesList.add(personBuffer.get(i).getDisplayName());
+                }
+            } finally {
+                personBuffer.close();
+            }
+
+            mCirclesAdapter.notifyDataSetChanged();
+        } else {
+            Log.e(TAG, "Error requesting visible circles: " + peopleData.getStatus());
+        }
+    }
     private void logVerbose(String message) {
         if (mIsLogVerbose) {
             Log.v(TAG, message);

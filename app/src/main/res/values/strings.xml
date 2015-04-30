@@ -79,5 +79,8 @@
     https://developers.google.com/+/mobile/android/sign-in#enable_server-side_api_access_for_your_app
 
     -->
+    <!--
+    <string name="server_client_id">AIzaSyAXS3IOP4UQxt8gPehhU1moayA6RSTOBx0</string>
+    -->
     <string name="server_client_id"></string>
 </resources>
