@@ -12,6 +12,10 @@ android {
         versionName "1.0"
     }
     buildTypes {
+        debug {
+            buildConfigField "String", "TRAVEL_BASE_API_ID", "\"${project.property("travelBaseApiId")}\""
+            buildConfigField "String", "TRAVEL_BASE_API_SECRET", "\"${project.property("travelBaseApiSecret")}\""
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
