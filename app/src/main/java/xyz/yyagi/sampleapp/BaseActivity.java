@@ -30,6 +30,11 @@ public class BaseActivity extends MaterialNavigationDrawer {
         Intent signInActivityIntent = new Intent(this, SignInActivity.class);
         this.addSection(newSection("SignIn", signInActivityIntent));
 
+
+        Intent travelListActivityIntent = new Intent(this, TravelListActivity.class);
+        this.addSection(newSection("TravelList", travelListActivityIntent));
+
+        // bottom
         this.addBottomSection(newSection("Bottom Section",R.drawable.ic_arrow_drop_up_white_24dp,new Intent(this,Settings.class)));
         disableLearningPattern();
     }

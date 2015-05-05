@@ -15,6 +15,8 @@ android {
         debug {
             buildConfigField "String", "TRAVEL_BASE_API_ID", "\"${project.property("travelBaseApiId")}\""
             buildConfigField "String", "TRAVEL_BASE_API_SECRET", "\"${project.property("travelBaseApiSecret")}\""
+            buildConfigField "String", "USER_ID", "\"${project.property("user_id")}\""
+            buildConfigField "String", "PROVIDER", "\"${project.property("provider")}\""
         }
         release {
             minifyEnabled false
@@ -30,4 +32,5 @@ dependencies {
     compile 'com.ogaclejapan.smarttablayout:library:1.1.1@aar'
     compile 'com.ogaclejapan.smarttablayout:utils-v13:1.1.1@aar'
     compile 'com.google.android.gms:play-services:7.0.0'
+    compile 'com.orhanobut:wasp:1.9'
 }
