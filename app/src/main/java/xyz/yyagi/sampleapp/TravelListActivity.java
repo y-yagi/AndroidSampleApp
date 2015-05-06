@@ -21,9 +21,11 @@ import com.orhanobut.wasp.WaspError;
 import com.orhanobut.wasp.http.Auth;
 import com.orhanobut.wasp.parsers.GsonParser;
 import com.orhanobut.wasp.utils.LogLevel;
+import com.orhanobut.wasp.utils.NetworkMode;
 
 import java.net.CookiePolicy;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +54,7 @@ public class TravelListActivity extends ActionBarActivity {
                 .setParser(new GsonParser())             // Optional, default Gson
                 .trustCertificates()                     // Optional
                 .enableCookies(CookiePolicy.ACCEPT_ALL)  // Optional
+                .setNetworkMode(NetworkMode.MOCK)
                 .build()                                 // Must be called
                 .create(TravelBaseService.class);        // Must be called
 
@@ -70,9 +73,9 @@ public class TravelListActivity extends ActionBarActivity {
                 Toast.makeText(mActivity, "auth success", Toast.LENGTH_LONG).show();
 
                 String authHeader = "Bearer " + authorization.access_token;
-                mService.fetchTravels(authHeader, "v1", new CallBack<List<Travel>>() {
+                mService.fetchTravels(authHeader, "v1", new CallBack<ArrayList<Travel>>() {
                     @Override
-                    public void onSuccess(List<Travel> travels) {
+                    public void onSuccess(ArrayList<Travel> travels) {
                         Toast.makeText(mActivity, "success", Toast.LENGTH_LONG).show();
                         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                         LinearLayout linearLayout;

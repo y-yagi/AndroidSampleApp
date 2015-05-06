@@ -9,7 +9,7 @@ import com.orhanobut.wasp.http.POST;
 import com.orhanobut.wasp.http.Path;
 import com.orhanobut.wasp.http.RetryPolicy;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import xyz.yyagi.sampleapp.models.Authorization;
@@ -28,12 +28,12 @@ public interface TravelBaseService {
         CallBack<Authorization> callBack
     );
 
-    @Mock
+    @Mock(statusCode = 200, path = "mockData/TravelBaseService.fetchTravels")
     @GET("/api/{version}/travels")
     void fetchTravels(
         @Header("Authorization") String authToken,
         @Path("version") String version,
-        CallBack<List<Travel>> callBack
+        CallBack<ArrayList<Travel>> callBack
     );
 
 }
