@@ -6,4 +6,7 @@ package xyz.yyagi.sampleapp.models;
 public class Travel {
     public int id;
     public String name;
+    public String start_date;
+    public String end_date;
+    public String memo;
 }

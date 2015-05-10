@@ -4,9 +4,14 @@ import android.app.Activity;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Base64;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.accessibility.AccessibilityManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,9 +21,11 @@ import com.orhanobut.wasp.WaspError;
 import com.orhanobut.wasp.http.Auth;
 import com.orhanobut.wasp.parsers.GsonParser;
 import com.orhanobut.wasp.utils.LogLevel;
+import com.orhanobut.wasp.utils.NetworkMode;
 
 import java.net.CookiePolicy;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +37,14 @@ import xyz.yyagi.sampleapp.services.TravelBaseService;
 
 public class TravelListActivity extends ActionBarActivity {
     Activity mActivity;
+    LinearLayout mTravelList;
     TravelBaseService mService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_travel_list);
+        mTravelList = (LinearLayout)findViewById(R.id.travelList);
         mActivity = this;
 
         mService = new Wasp.Builder(this)
@@ -45,6 +54,7 @@ public class TravelListActivity extends ActionBarActivity {
                 .setParser(new GsonParser())             // Optional, default Gson
                 .trustCertificates()                     // Optional
                 .enableCookies(CookiePolicy.ACCEPT_ALL)  // Optional
+                .setNetworkMode(NetworkMode.MOCK)
                 .build()                                 // Must be called
                 .create(TravelBaseService.class);        // Must be called
 
@@ -63,16 +73,34 @@ public class TravelListActivity extends ActionBarActivity {
                 Toast.makeText(mActivity, "auth success", Toast.LENGTH_LONG).show();
 
                 String authHeader = "Bearer " + authorization.access_token;
-                mService.fetchTravels(authHeader, "v1", new CallBack<List<Travel>>() {
+                mService.fetchTravels(authHeader, "v1", new CallBack<ArrayList<Travel>>() {
                     @Override
-                    public void onSuccess(List<Travel> travels) {
+                    public void onSuccess(ArrayList<Travel> travels) {
                         Toast.makeText(mActivity, "success", Toast.LENGTH_LONG).show();
-                        String detail = "";
+                        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                        LinearLayout linearLayout;
+                        CardView cardView;
+                        TextView textView;
+
                         for (Travel travel : travels) {
-                            detail += travel.id + " : " + travel.name + "\n";
+                            linearLayout = (LinearLayout) inflater.inflate(R.layout.travel_card, null);
+                            cardView = (CardView) linearLayout.findViewById(R.id.card_view);
+
+                            textView = (TextView)linearLayout.findViewById(R.id.name);
+                            textView.setText(travel.name);
+                            textView = (TextView)linearLayout.findViewById(R.id.date);
+                            textView.setText(travel.start_date + "〜" + travel.end_date);
+                            textView = (TextView)linearLayout.findViewById(R.id.memo);
+                            textView.setText(travel.memo);
+
+                            cardView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Toast.makeText(mActivity, String.valueOf(v.getTag()) + "番目のCardViewがクリックされました", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            mTravelList.addView(linearLayout);
                         }
-                        TextView textView = (TextView)findViewById(R.id.detail);
-                        textView.setText(detail);
                     }
 
                     @Override
