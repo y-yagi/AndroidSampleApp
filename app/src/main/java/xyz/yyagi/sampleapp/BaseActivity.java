@@ -36,6 +36,9 @@ public class BaseActivity extends MaterialNavigationDrawer {
         Intent timeTableActivityIntent = new Intent(this, TimeTableActivity.class);
         this.addSection(newSection("TimeTable", timeTableActivityIntent));
 
+        Intent concealTestActivityIntent = new Intent(this, ConcealTestActivity.class);
+        this.addSection(newSection("ConcealTest", concealTestActivityIntent));
+
         // bottom
         this.addBottomSection(newSection("Bottom Section",R.drawable.ic_arrow_drop_up_white_24dp,new Intent(this,Settings.class)));
         disableLearningPattern();
