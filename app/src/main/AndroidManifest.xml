@@ -44,6 +44,10 @@
             android:name=".TimeTableActivity"
             android:label="@string/title_activity_time_table" >
         </activity>
+        <activity
+            android:name=".ConcealTestActivity"
+            android:label="@string/title_activity_conceal_test" >
+        </activity>
     </application>
 
 </manifest>
