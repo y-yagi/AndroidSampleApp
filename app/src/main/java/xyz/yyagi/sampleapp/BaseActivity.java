@@ -39,6 +39,9 @@ public class BaseActivity extends MaterialNavigationDrawer {
         Intent concealTestActivityIntent = new Intent(this, ConcealTestActivity.class);
         this.addSection(newSection("ConcealTest", concealTestActivityIntent));
 
+        Intent googleMapActivityIntent = new Intent(this, MapsActivity.class);
+        this.addSection(newSection("GoogleMap", googleMapActivityIntent));
+
         // bottom
         this.addBottomSection(newSection("Bottom Section",R.drawable.ic_arrow_drop_up_white_24dp,new Intent(this,Settings.class)));
         disableLearningPattern();

@@ -86,4 +86,5 @@
     <string name="title_activity_travel_list">TravelListActivity</string>
     <string name="title_activity_time_table">TimeTableActivity</string>
     <string name="title_activity_conceal_test">ConcealTestActivity</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
